@@ -506,7 +506,6 @@
 
         function updateQuiz() {
             const item = data[currentQuizIndex];
-            // Crear oración con espacio en blanco
             const sentenceWithBlank = item.exEs.replace(item.verb.toLowerCase(), "_______").replace(item.verb, "_______");
             document.getElementById("quiz-question").innerText = sentenceWithBlank;
             document.getElementById("quiz-counter").innerText = `${currentQuizIndex + 1} / ${data.length}`;
@@ -515,7 +514,6 @@
             feedbackEl.className = "feedback-box";
             feedbackEl.style.display = "none";
 
-            // Opciones de verbos para el test
             const wrongVerbs = data.filter(d => d.verb !== item.verb).map(d => d.verb);
             const randomWrongVerb = wrongVerbs[Math.floor(Math.random() * wrongVerbs.length)];
 
@@ -538,3 +536,27 @@
                         feedbackEl.innerHTML = `<strong>¡Correcto!</strong> <em>${item.verb}</em> (${item.trans})`;
                     } else {
                         feedbackEl.className = "feedback-box active wrong-fb";
+                        feedbackEl.innerHTML = `<strong>Incorrecto.</strong> La respuesta correcta es <em>${item.verb}</em>.`;
+                    }
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        function nextQuiz() {
+            currentQuizIndex = (currentQuizIndex + 1) % data.length;
+            updateQuiz();
+        }
+
+        function prevQuiz() {
+            currentQuizIndex = (currentQuizIndex - 1 + data.length) % data.length;
+            updateQuiz();
+        }
+
+        // Init
+        updateCard();
+        updateMatch();
+        updateQuiz();
+    </script>
+</body>
+</html>
