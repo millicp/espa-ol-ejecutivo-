@@ -365,6 +365,7 @@
                 wrong: "un problema técnico",
                 trans: "To sign a commercial contract",
                 exEs: "El director firma un contrato hoy.",
+                exBlank: "El director _______ un contrato hoy.",
                 exEn: "The director signs a contract today."
             },
             {
@@ -374,6 +375,7 @@
                 wrong: "a los clientes",
                 trans: "To approve the annual budget",
                 exEs: "La gerenta aprueba el presupuesto.",
+                exBlank: "La gerenta _______ el presupuesto.",
                 exEn: "The manager approves the budget."
             },
             {
@@ -383,6 +385,7 @@
                 wrong: "un contrato comercial",
                 trans: "To assist / help the clients",
                 exEs: "Carlos atiende a los clientes.",
+                exBlank: "Carlos _______ a los clientes.",
                 exEn: "Carlos assists the clients."
             },
             {
@@ -392,6 +395,7 @@
                 wrong: "la estrategia de ventas",
                 trans: "To solve an urgent problem",
                 exEs: "El equipo resuelve el problema.",
+                exBlank: "El equipo _______ el problema.",
                 exEn: "The team solves the problem."
             },
             {
@@ -401,6 +405,7 @@
                 wrong: "el presupuesto anual",
                 trans: "To discuss the sales strategy",
                 exEs: "Los directores discuten la estrategia.",
+                exBlank: "Los directores _______ la estrategia.",
                 exEn: "The directors discuss the strategy."
             },
             {
@@ -410,6 +415,7 @@
                 wrong: "a los clientes",
                 trans: "To meet monthly goals",
                 exEs: "La empresa cumple las metas.",
+                exBlank: "La empresa _______ las metas.",
                 exEn: "The company meets the goals."
             }
         ];
@@ -506,8 +512,7 @@
 
         function updateQuiz() {
             const item = data[currentQuizIndex];
-            const sentenceWithBlank = item.exEs.replace(item.verb.toLowerCase(), "_______").replace(item.verb, "_______");
-            document.getElementById("quiz-question").innerText = sentenceWithBlank;
+            document.getElementById("quiz-question").innerText = item.exBlank;
             document.getElementById("quiz-counter").innerText = `${currentQuizIndex + 1} / ${data.length}`;
             
             const feedbackEl = document.getElementById("feedback-quiz");
@@ -533,7 +538,7 @@
                     feedbackEl.style.display = "block";
                     if (opt.isCorrect) {
                         feedbackEl.className = "feedback-box active correct-fb";
-                        feedbackEl.innerHTML = `<strong>¡Correcto!</strong> <em>${item.verb}</em> (${item.trans})`;
+                        feedbackEl.innerHTML = `<strong>¡Correcto!</strong><br><em>${item.exEs}</em><br><small>${item.exEn}</small>`;
                     } else {
                         feedbackEl.className = "feedback-box active wrong-fb";
                         feedbackEl.innerHTML = `<strong>Incorrecto.</strong> La respuesta correcta es <em>${item.verb}</em>.`;
