@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Español Ejecutivo A1 - Colocaciones</title>
+    <title>Español Ejecutivo - Módulo 1</title>
     <style>
         :root {
             --primary: #1e3a8a;
@@ -48,26 +48,27 @@
         /* Tabs Navigation */
         .nav-tabs {
             display: flex;
-            gap: 10px;
+            gap: 5px;
             margin-bottom: 25px;
             background: #e2e8f0;
             padding: 5px;
             border-radius: 12px;
             width: 100%;
-            max-width: 500px;
+            max-width: 520px;
         }
 
         .tab-btn {
             flex: 1;
-            padding: 10px 12px;
+            padding: 10px 8px;
             border: none;
             background: transparent;
             color: #475569;
             font-weight: 600;
-            font-size: 0.85rem;
+            font-size: 0.78rem;
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s;
+            text-align: center;
         }
 
         .tab-btn.active {
@@ -158,7 +159,7 @@
         }
 
         .translation {
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             color: #475569;
             font-style: italic;
             margin-bottom: 12px;
@@ -206,8 +207,8 @@
             font-size: 0.9rem;
         }
 
-        /* Matching Module */
-        .match-card {
+        /* Generic Module Cards */
+        .module-card {
             background: var(--card-bg);
             padding: 20px;
             border-radius: 16px;
@@ -215,8 +216,8 @@
             border: 1px solid #e2e8f0;
         }
 
-        .match-verb {
-            font-size: 1.4rem;
+        .module-title {
+            font-size: 1.3rem;
             font-weight: 700;
             color: var(--primary);
             text-align: center;
@@ -287,13 +288,14 @@
 <body>
 
     <header>
-        <h1>Español Ejecutivo A1</h1>
-        <p class="subtitle">Business Collocations (-AR, -ER, -IR)</p>
+        <h1>Español Ejecutivo</h1>
+        <p class="subtitle">Módulo 1 - Colocaciones (-AR, -ER, -IR)</p>
     </header>
 
     <div class="nav-tabs">
         <button class="tab-btn active" onclick="switchTab('flashcards', event)">1. Flashcards</button>
         <button class="tab-btn" onclick="switchTab('relacionar', event)">2. Relacionar</button>
+        <button class="tab-btn" onclick="switchTab('quiz', event)">3. Reto Contexto</button>
     </div>
 
     <!-- TAB 1: FLASHCARDS -->
@@ -322,21 +324,35 @@
 
     <!-- TAB 2: RELACIONAR -->
     <div id="relacionar" class="tab-content">
-        <div class="match-card">
+        <div class="module-card">
             <div style="font-size:0.8rem; font-weight:700; color:#64748b; text-transform:uppercase; margin-bottom:5px;">Elige el complemento correcto:</div>
-            <div class="match-verb" id="match-verb">Firmar</div>
+            <div class="module-title" id="match-verb">Firmar</div>
             
-            <div class="options-grid" id="options-container">
-                <!-- Se genera dinámicamente -->
-            </div>
-
-            <div class="feedback-box" id="feedback"></div>
+            <div class="options-grid" id="options-container"></div>
+            <div class="feedback-box" id="feedback-match"></div>
         </div>
 
         <div class="controls">
             <button class="btn" onclick="prevMatch()">Anterior</button>
             <span class="counter" id="match-counter">1 / 6</span>
             <button class="btn" onclick="nextMatch()">Siguiente</button>
+        </div>
+    </div>
+
+    <!-- TAB 3: RETO DE CONTEXTO -->
+    <div id="quiz" class="tab-content">
+        <div class="module-card">
+            <div style="font-size:0.8rem; font-weight:700; color:#64748b; text-transform:uppercase; margin-bottom:5px;">Completa la oración corporativa:</div>
+            <div class="module-title" id="quiz-question" style="font-size: 1.1rem; text-align: left; margin-bottom: 15px;">Pregunta aquí...</div>
+            
+            <div class="options-grid" id="quiz-container"></div>
+            <div class="feedback-box" id="feedback-quiz"></div>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="prevQuiz()">Anterior</button>
+            <span class="counter" id="quiz-counter">1 / 6</span>
+            <button class="btn" onclick="nextQuiz()">Siguiente</button>
         </div>
     </div>
 
@@ -398,9 +414,17 @@
             }
         ];
 
+        // --- TABS LOGIC ---
+        function switchTab(tabId, event) {
+            document.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active"));
+            document.querySelectorAll(".tab-btn").forEach(el => el.classList.remove("active"));
+
+            document.getElementById(tabId).classList.add("active");
+            event.target.classList.add("active");
+        }
+
         // --- FLASHCARDS LOGIC ---
         let currentCardIndex = 0;
-        let isFlipped = false;
 
         function updateCard() {
             const item = data[currentCardIndex];
@@ -412,16 +436,11 @@
             document.getElementById("card-ex-en").innerText = item.exEn;
             document.getElementById("card-counter").innerText = `${currentCardIndex + 1} / ${data.length}`;
             
-            // Reset flip
-            const cardEl = document.getElementById("card");
-            cardEl.classList.remove("flipped");
-            isFlipped = false;
+            document.getElementById("card").classList.remove("flipped");
         }
 
         function flipCard() {
-            const cardEl = document.getElementById("card");
-            cardEl.classList.toggle("flipped");
-            isFlipped = !isFlipped;
+            document.getElementById("card").classList.toggle("flipped");
         }
 
         function nextCard() {
@@ -442,11 +461,10 @@
             document.getElementById("match-verb").innerText = item.verb;
             document.getElementById("match-counter").innerText = `${currentMatchIndex + 1} / ${data.length}`;
             
-            const feedbackEl = document.getElementById("feedback");
+            const feedbackEl = document.getElementById("feedback-match");
             feedbackEl.className = "feedback-box";
             feedbackEl.style.display = "none";
 
-            // Mezclar opciones
             const options = [
                 { text: item.correct, isCorrect: true },
                 { text: item.wrong, isCorrect: false }
@@ -459,22 +477,18 @@
                 const btn = document.createElement("button");
                 btn.className = "option-btn";
                 btn.innerText = opt.text;
-                btn.onclick = () => checkAnswer(opt.isCorrect, item);
+                btn.onclick = () => {
+                    feedbackEl.style.display = "block";
+                    if (opt.isCorrect) {
+                        feedbackEl.className = "feedback-box active correct-fb";
+                        feedbackEl.innerHTML = `<strong>Correct!</strong><br><em>${item.verb} ${item.correct}</em>.<br><small>${item.exEs} (${item.exEn})</small>`;
+                    } else {
+                        feedbackEl.className = "feedback-box active wrong-fb";
+                        feedbackEl.innerHTML = `<strong>Incorrect.</strong> Try again!`;
+                    }
+                };
                 container.appendChild(btn);
             });
-        }
-
-        function checkAnswer(isCorrect, item) {
-            const feedbackEl = document.getElementById("feedback");
-            feedbackEl.style.display = "block";
-
-            if (isCorrect) {
-                feedbackEl.className = "feedback-box active correct-fb";
-                feedbackEl.innerHTML = `<strong>Correct!</strong><br>Spanish Collocation: <em>${item.verb} ${item.correct}</em>.<br><small>Example: ${item.exEs} (${item.exEn})</small>`;
-            } else {
-                feedbackEl.className = "feedback-box active wrong-fb";
-                feedbackEl.innerHTML = `<strong>Incorrect.</strong> Try again! Remember: <em>${item.verb}</em> pairs with <em>${item.correct}</em>.`;
-            }
         }
 
         function nextMatch() {
@@ -487,18 +501,40 @@
             updateMatch();
         }
 
-        // --- NAVIGATION TABS ---
-        function switchTab(tabId, event) {
-            document.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active"));
-            document.querySelectorAll(".tab-btn").forEach(el => el.classList.remove("active"));
+        // --- QUIZ LOGIC ---
+        let currentQuizIndex = 0;
 
-            document.getElementById(tabId).classList.add("active");
-            event.target.classList.add("active");
-        }
+        function updateQuiz() {
+            const item = data[currentQuizIndex];
+            // Crear oración con espacio en blanco
+            const sentenceWithBlank = item.exEs.replace(item.verb.toLowerCase(), "_______").replace(item.verb, "_______");
+            document.getElementById("quiz-question").innerText = sentenceWithBlank;
+            document.getElementById("quiz-counter").innerText = `${currentQuizIndex + 1} / ${data.length}`;
+            
+            const feedbackEl = document.getElementById("feedback-quiz");
+            feedbackEl.className = "feedback-box";
+            feedbackEl.style.display = "none";
 
-        // Init
-        updateCard();
-        updateMatch();
-    </script>
-</body>
-</html>
+            // Opciones de verbos para el test
+            const wrongVerbs = data.filter(d => d.verb !== item.verb).map(d => d.verb);
+            const randomWrongVerb = wrongVerbs[Math.floor(Math.random() * wrongVerbs.length)];
+
+            const options = [
+                { text: item.verb, isCorrect: true },
+                { text: randomWrongVerb, isCorrect: false }
+            ].sort(() => Math.random() - 0.5);
+
+            const container = document.getElementById("quiz-container");
+            container.innerHTML = "";
+
+            options.forEach(opt => {
+                const btn = document.createElement("button");
+                btn.className = "option-btn";
+                btn.innerText = opt.text;
+                btn.onclick = () => {
+                    feedbackEl.style.display = "block";
+                    if (opt.isCorrect) {
+                        feedbackEl.className = "feedback-box active correct-fb";
+                        feedbackEl.innerHTML = `<strong>¡Correcto!</strong> <em>${item.verb}</em> (${item.trans})`;
+                    } else {
+                        feedbackEl.className = "feedback-box active wrong-fb";
