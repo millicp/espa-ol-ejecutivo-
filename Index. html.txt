@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executive Spanish - Flashcards Móviles (A1)</title>
+    <style>
+        :root {
+            --primary: #1B365D;
+            --secondary: #4A5568;
+            --bg: #F7FAFC;
+            --card-bg: #FFFFFF;
+            --text: #2D3748;
+            --border: #E2E8F0;
+            --success: #38A169;
+            --error: #E53E3E;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h1 {
+            font-size: 1.25rem;
+            color: var(--primary);
+            margin: 0 0 5px 0;
+        }
+
+        p.subtitle {
+            font-size: 0.85rem;
+            color: var(--secondary);
+            margin: 0;
+        }
+
+        .nav-tabs {
+            display: flex;
+            width: 100%;
+            max-width: 500px;
+            margin-bottom: 20px;
+            background: var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: none;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: var(--secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            display: none;
+        }
+
+        .container.active {
+            display: block;
+        }
+
+        /* Flashcard Styles */
+        .flashcard-scene {
+            width: 100%;
+            height: 240px;
+            perspective: 1000px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .flashcard {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.5s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-radius: 12px;
+        }
+
+        .flashcard.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        .card-face.back {
+            transform: rotateY(180deg);
+            background: #EDF2F7;
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .card-desc {
+            font-size: 0.95rem;
+            color: var(--secondary);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn:active {
+            opacity: 0.8;
+        }
+
+        /* Quiz Styles */
+        .quiz-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+        }
+
+        .quiz-question {
+            font-size: 1rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--text);
+        }
+
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-btn {
+            padding: 12px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-btn:hover {
+            background: var(--bg);
+        }
+
+        .option-btn.correct {
+            background: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+
+        .option-btn.incorrect {
+            background: var(--error);
+            color: white;
+            border-color: var(--error);
+        }
+
+        .score-box {
+            text-align: center;
+            font-weight: bold;
+            margin-top: 15px;
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Executive Spanish</h1>
+        <p class="subtitle">Módulo 1 & 2: Colocaciones y Protocolo Directivo</p>
+    </header>
+
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('flashcards', event)">Flashcards</button>
+        <button class="tab-btn" onclick="switchTab('quiz', event)">Reto de Colocación</button>
+    </div>
+
+    <!-- SECCIÓN 1: FLASHCARDS -->
+    <div id="flashcards" class="container active">
+        <div class="flashcard-scene" onclick="flipCard()">
+            <div class="flashcard" id="card">
+                <div class="card-face">
+                    <div class="card-title" id="fc-term">firmar</div>
+                    <div class="card-desc">toca para ver colocación</div>
+                </div>
+                <div class="card-face back">
+                    <div class="card-title" id="fc-collab">firmar un contrato comercial</div>
+                    <div class="card-desc" id="fc-trans">to sign a commercial contract</div>
+                </div>
+            </div>
+        </div>
+        <div class="controls">
+            <button class="btn" onclick="prevCard()">Anterior</button>
+            <button class="btn" onclick="nextCard()">Siguiente</button>
+        </div>
+    </div>
+
+    <!-- SECCIÓN 2: RETO DE COLOCACIÓN -->
+    <div id="quiz" class="container">
+        <div class="quiz-card">
+            <div class="quiz-question" id="q-text">Cargando pregunta...</div>
+            <div class="options-grid" id="q-options"></div>
+        </div>
+        <button class="btn" id="next-q-btn" style="display:none;" onclick="nextQuestion()">Siguiente Pregunta</button>
+        <div class="score-box" id="score-display">Puntuación: 0 / 5</div>
+    </div>
+
+    <script>
+        // Datos de Flashcards
+        const cardsData = [
+            { term: "firmar", collab: "firmar un contrato comercial", trans: "to sign a commercial contract" },
+            { term: "enviar", collab: "enviar un correo electrónico", trans: "to send an email" },
+            { term: "preparar", collab: "preparar la reunión de directorio", trans: "to prepare the board meeting" },
+            { term: "visitar", collab: "visitar las instalaciones", trans: "to visit the facilities" },
+            { term: "negociar", collab: "negociar los términos del acuerdo", trans: "to negotiate agreement terms" },
+            { term: "leer", collab: "leer el reporte de auditoría", trans: "to read the audit report" },
+            { term: "vender", collab: "vender servicios corporativos", trans: "to sell corporate services" },
+            { term: "abrir", collab: "abrir una nueva filial", trans: "to open a new branch" }
+        ];
+
+        let currentCardIndex = 0;
+
+        function flipCard() {
+            document.getElementById('card').classList.toggle('is-flipped');
+        }
+
+        function updateCard() {
+            const cardEl = document.getElementById('card');
+            cardEl.classList.remove('is-flipped');
+            setTimeout(() => {
+                document.getElementById('fc-term').innerText = cardsData[currentCardIndex].term;
+                document.getElementById('fc-collab').innerText = cardsData[currentCardIndex].collab;
+                document.getElementById('fc-trans').innerText = cardsData[currentCardIndex].trans;
+            }, 150);
+        }
+
+        function nextCard() {
+            currentCardIndex = (currentCardIndex + 1) % cardsData.length;
+            updateCard();
+        }
+
+        function prevCard() {
+            currentCardIndex = (currentCardIndex - 1 + cardsData.length) % cardsData.length;
+            updateCard();
+        }
+
+        // Datos del Quiz
+        const quizData = [
+            {
+                q: "Para cerrar el acuerdo hoy, el CEO necesita ___________ el contrato comercial.",
+                options: ["firmar", "enviar", "visitar"],
+                correct: 0
+            },
+            {
+                q: "La secretaria va a ___________ un correo electrónico al cliente VIP.",
+                options: ["preparar", "enviar", "leer"],
+                correct: 1
+            },
+            {
+                q: "Antes de la presentación, el equipo debe ___________ la reunión de directorio.",
+                options: ["negociar", "preparar", "abrir"],
+                correct: 1
+            },
+            {
+                q: "El analista necesita ___________ el informe de auditoría antes de la junta.",
+                options: ["leer", "vender", "firmar"],
+                correct: 0
+            },
+            {
+                q: "La empresa planea ___________ una nueva filial en Lima este trimestre.",
+                options: ["enviar", "visitar", "abrir"],
+                correct: 2
+            }
+        ];
+
+        let currentQuizIndex = 0;
+        let score = 0;
+
+        function loadQuiz() {
+            if (currentQuizIndex >= quizData.length) {
+                document.getElementById('q-text').innerText = "¡Reto completado con éxito!";
+                document.getElementById('q-options').innerHTML = `<p style="text-align:center; font-size:1.1rem;">Tu puntuación final es ${score} de ${quizData.length}</p>`;
+                document.getElementById('next-q-btn').style.display = 'none';
+                return;
+            }
+
+            const currentQ = quizData[currentQuizIndex];
+            document.getElementById('q-text').innerText = `${currentQuizIndex + 1}. ${currentQ.q}`;
+            
+            const optionsContainer = document.getElementById('q-options');
+            optionsContainer.innerHTML = '';
+
+            currentQ.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                btn.onclick = () => selectOption(index, btn, currentQ.correct);
+                optionsContainer.appendChild(btn);
+            });
+
+            document.getElementById('next-q-btn').style.display = 'none';
+        }
+
+        function selectOption(selectedIndex, buttonElement, correctIndex) {
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(btn => btn.disabled = true);
+
+            if (selectedIndex === correctIndex) {
+                buttonElement.classList.add('correct');
+                score++;
+            } else {
+                buttonElement.classList.add('incorrect');
+                buttons[correctIndex].classList.add('correct');
+            }
+
+            document.getElementById('score-display').innerText = `Puntuación: ${score} / ${quizData.length}`;
+            document.getElementById('next-q-btn').style.display = 'block';
+        }
+
+        function nextQuestion() {
+            currentQuizIndex++;
+            loadQuiz();
+        }
+
+        function switchTab(tabId, evt) {
+            document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+
+            document.getElementById(tabId).classList.add('active');
+            evt.currentTarget.classList.add('active');
+
+            if (tabId === 'quiz' && currentQuizIndex === 0) {
+                loadQuiz();
+            }
+        }
+
+        // Inicializar
+        updateCard();
+    </script>
+</body>
+</html>
